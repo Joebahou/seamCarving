@@ -1,5 +1,7 @@
 import argparse
 
+import numpy as np
+
 import nearest_neighbor
 import seam_carving
 import utils
@@ -41,5 +43,11 @@ def main(args):
 
 
 if __name__ == '__main__':
-    args = get_args()
-    main(args)
+    # args = get_args()
+    # main(args)
+
+    m=seam_carving.index_matrix(3,2)
+    m=np.array([[1,2,3],[4,5,6],[7,8,9]])
+    print(m)
+    n=seam_carving.get_costs(m)
+    print(n)
