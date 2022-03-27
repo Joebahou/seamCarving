@@ -10,7 +10,7 @@ def index_matrix(num_of_cols,num_of_rows):
         idx_mat.append([])
         for j in range(num_of_cols):
             idx_mat[i].append([i,j])
-    return idx_mat
+    return np.array(idx_mat)
 
 def grayScaling(image):
     return utils.to_grayscale(image)
@@ -111,9 +111,17 @@ def seam_from_original_image(relative_seam,idx_mat):
         original_seam.append([original_x,original_y])
     return original_seam
 
+#seam is ordered from last to first row
 def remove_seam(mat,seam):
+    seam=seam[::-1] #revesing the seam so that the first cell has the index from the first row
     for i in range(len(mat)):
-        mat[:, j:-1] = mat[:, j+1:]
+        j=seam[i][1]
+        mat[i][:, j:-1] = mat[i][:, j+1:] #shift
+        mat.resize((len(mat),len(mat[0])-1))
+        mat = np.delete(mat, np.s_[-1:], axis=1)
+
+
+
 
 
 
