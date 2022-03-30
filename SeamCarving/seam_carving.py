@@ -31,11 +31,14 @@ def resize(image: NDArray, out_height: int, out_width: int, forward_implementati
     c_l=utils.calculate_c_l(grayScale_mat)
     c_v=utils.calculate_c_v(grayScale_mat)
     c_r=utils.calculate_c_r(grayScale_mat)
-    seam_list=list()
+    #seam_list=list()
+    dict_col=dict()
+    for i in range(in_rows):
+        dict_col[i]=set()
     for i in range(abs(delta_w)):
         cost_mat=utils.get_costs(energy_mat,forward_implementation,c_l,c_v,c_r,rows=in_rows,cols=in_cols-i)
         seam=utils.backtracking(cost_mat,energy_mat,c_v,c_l,forward_implementation,in_rows,in_cols-i)
-        original_idx_seam=utils.seam_from_original_image(seam,idx_mat,seam_list)
+        original_idx_seam=utils.seam_from_original_image(seam,idx_mat,dict_col)
         seam_db.append(original_idx_seam)
         utils.remove_seam(grayScale_mat,seam,in_rows,in_cols-i)
         utils.remove_seam(energy_mat,seam,in_rows,in_cols-i)
@@ -47,8 +50,8 @@ def resize(image: NDArray, out_height: int, out_width: int, forward_implementati
         for i in range(in_rows):
             new_j=0
             for j in range(in_cols):
-                idx=[i,j]
-                if idx not in seam_list:
+                print(i, j)
+                if j not in dict_col[i]:
                     new_image[i][new_j]=image[i][j]
                     new_j=new_j+1
                 else:

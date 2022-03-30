@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
 
 
-    # mm=np.array([[1,2,3],[4,5,6]])
+     #mm=np.array([[1,2,3],[4,5,6]])
     # m=utils.index_matrix(4,4)
 
     # m[0] = np.array(m[0])

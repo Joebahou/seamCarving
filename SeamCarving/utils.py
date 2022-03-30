@@ -84,8 +84,8 @@ def get_costs(energy_mat, isForward, c_l, c_v, c_r,rows,cols):
     cost_mat = np.copy(energy_mat)
     for i in range(1, rows):
         num_of_cols = cols
-        m_prev_left = np.roll(cost_mat[i - 1], -1)
-        m_prev_right = np.roll(cost_mat[i - 1], 1)
+        m_prev_left = np.roll(cost_mat[i - 1], 1)
+        m_prev_right = np.roll(cost_mat[i - 1], -1)
         m_prev_middle = np.copy(cost_mat[i - 1])
         m_left = cost_mat[i] + m_prev_left
         m_right = cost_mat[i] + m_prev_right
@@ -113,8 +113,8 @@ def calculate_c_v(grayScale_mat):
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
     #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_v = abs(gs_i_j_plus_1 - gs_i_j_minus_1)
-    c_v[:,-1]=255
-    c_v[:,0]=255
+    #c_v[:,-1]=255
+    #c_v[:,0]=255
     return c_v
 
 
@@ -126,8 +126,9 @@ def calculate_c_l(grayScale_mat):
     gs_i_minus_1_j = np.roll(grayScale_mat, 1, axis=0)  # rows
     #gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
     c_l = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_minus_1)
-    c_l[:,-1]=255
-    c_l[:,0]=255
+    #c_l[:,-1]=255
+    #c_l[:,0]=255
+    #c_l[0]=255
     return c_l
 
 
@@ -139,8 +140,9 @@ def calculate_c_r(grayScale_mat):
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
     #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_r = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_plus_1)
-    c_r[:,-1]=255
-    c_r[:,0]=255
+    #c_r[:,-1]=255
+    #c_r[:,0]=255
+    #c_r[0]=255
     return c_r
 
 
@@ -180,7 +182,7 @@ def backtracking(cost_mat, energy_mat, c_v, c_l, isForward,rows,cols):
     return seam
 
 
-def seam_from_original_image(relative_seam, idx_mat,seam_list):
+def seam_from_original_image(relative_seam, idx_mat,dict_col):
     original_seam = []
     for i in range(len(relative_seam)):
         x = relative_seam[i][0]
@@ -188,12 +190,21 @@ def seam_from_original_image(relative_seam, idx_mat,seam_list):
         original_x = idx_mat[x][y][0]
         original_y = idx_mat[x][y][1]
         original_seam.append([original_x, original_y])
-        seam_list.append([original_x, original_y])
+        dict_col[original_x].add(original_y)
     return original_seam
 
 
 # seam is ordered from last to first row
 def remove_seam(mat, seam,rows,cols):
+    seam = seam[::-1]# reversing the seam so that the first cell has the index from the first row
+    for i in range(rows):
+        j = seam[i][1]
+        mat[i][ j:-1] = mat[i][ j + 1:]  # shift
+        # mat.resize((rows, cols - 1))
+        # mat = np.delete(mat, np.s_[-1:], axis=1)
+
+# seam is ordered from last to first row
+def remove_seam_from_idx(mat, seam,rows,cols):
     seam = seam[::-1]# reversing the seam so that the first cell has the index from the first row
     for i in range(rows):
         j = seam[i][1]
