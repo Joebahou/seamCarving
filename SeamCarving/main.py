@@ -43,14 +43,17 @@ def main(args):
 
 
 if __name__ == '__main__':
-    # args = get_args()
-    # main(args)
+    args = get_args()
+    main(args)
 
-    m=seam_carving.index_matrix(4,4)
+
+
+    # mm=np.array([[1,2,3],[4,5,6]])
+    # m=utils.index_matrix(4,4)
 
     # m[0] = np.array(m[0])
-    print(m)
+    # print(mm.shape)
     # m[0] = np.array(m[0])
-    m[0][1:-1] = m[0][2:]
-
-    print(m)
+    # m[0][1:-1] = m[0][2:]
+    #
+    # print(m)
