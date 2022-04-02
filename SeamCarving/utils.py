@@ -107,18 +107,18 @@ def get_costs(energy_mat, isForward, c_l, c_v, c_r,rows,cols):
     return cost_mat
 
 
-def calculate_c_v(grayScale_mat):
+def calculate_c_v(grayScale_mat,cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
     #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
     #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_v = abs(gs_i_j_plus_1 - gs_i_j_minus_1)
-    #c_v[:,-1]=255
-    #c_v[:,0]=255
+    c_v[:,cols-1]=255
+    c_v[:,0]=255
     return c_v
 
 
-def calculate_c_l(grayScale_mat):
+def calculate_c_l(grayScale_mat,cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
     #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
@@ -126,13 +126,14 @@ def calculate_c_l(grayScale_mat):
     gs_i_minus_1_j = np.roll(grayScale_mat, 1, axis=0)  # rows
     #gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
     c_l = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_minus_1)
-    #c_l[:,-1]=255
-    #c_l[:,0]=255
-    #c_l[0]=255
+    c_l[0] = abs(gs_i_j_plus_1[0]-gs_i_j_minus_1[0])+255
+    c_l[:,cols-1]=255 + abs(gs_i_minus_1_j[:,cols-1]-gs_i_j_minus_1[:,cols-1])
+    c_l[:,0]=255+255
+
     return c_l
 
 
-def calculate_c_r(grayScale_mat):
+def calculate_c_r(grayScale_mat,cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
     #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_minus_1_j = np.roll(grayScale_mat, 1, axis=0)  # rows
@@ -140,9 +141,10 @@ def calculate_c_r(grayScale_mat):
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
     #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_r = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_plus_1)
-    #c_r[:,-1]=255
-    #c_r[:,0]=255
-    #c_r[0]=255
+    c_r[0] = abs(gs_i_j_plus_1[0]-gs_i_j_minus_1[0])+255
+    c_r[:,cols-1]=255+255
+    c_r[:,0]=255+abs(gs_i_minus_1_j[:,0]-gs_i_j_plus_1[:,0])
+
     return c_r
 
 
