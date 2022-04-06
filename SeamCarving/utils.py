@@ -77,10 +77,8 @@ def index_matrix(num_of_cols, num_of_rows):
     return np.array(idx_mat)
 
 
-
-
 # basic algorithm
-def get_costs(energy_mat, isForward, c_l, c_v, c_r,rows,cols):
+def get_costs(energy_mat, isForward, c_l, c_v, c_r, rows, cols):
     cost_mat = np.copy(energy_mat)
     for i in range(1, rows):
         num_of_cols = cols
@@ -107,48 +105,48 @@ def get_costs(energy_mat, isForward, c_l, c_v, c_r,rows,cols):
     return cost_mat
 
 
-def calculate_c_v(grayScale_mat,cols):
+def calculate_c_v(grayScale_mat, cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
-    #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
-    #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_v = abs(gs_i_j_plus_1 - gs_i_j_minus_1)
-    c_v[:,cols-1]=255
-    c_v[:,0]=255
+    c_v[:, cols - 1] = 255
+    c_v[:, 0] = 255
     return c_v
 
 
-def calculate_c_l(grayScale_mat,cols):
+def calculate_c_l(grayScale_mat, cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
-    #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
-    #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_minus_1_j = np.roll(grayScale_mat, 1, axis=0)  # rows
-    #gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
+    # gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
     c_l = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_minus_1)
-    c_l[0] = abs(gs_i_j_plus_1[0]-gs_i_j_minus_1[0])+255
-    c_l[:,cols-1]=255 + abs(gs_i_minus_1_j[:,cols-1]-gs_i_j_minus_1[:,cols-1])
-    c_l[:,0]=255+255
+    c_l[0] = abs(gs_i_j_plus_1[0] - gs_i_j_minus_1[0]) + 255
+    c_l[:, cols - 1] = 255 + abs(gs_i_minus_1_j[:, cols - 1] - gs_i_j_minus_1[:, cols - 1])
+    c_l[:, 0] = 255 + 255
 
     return c_l
 
 
-def calculate_c_r(grayScale_mat,cols):
+def calculate_c_r(grayScale_mat, cols):
     gs_i_j_plus_1 = np.roll(grayScale_mat, -1, axis=1)  # cols
-    #gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_plus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     gs_i_minus_1_j = np.roll(grayScale_mat, 1, axis=0)  # rows
-    #gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
+    # gs_i_minus_1_j[-1, ...] = grayScale_mat[-2, ...]
     gs_i_j_minus_1 = np.roll(grayScale_mat, 1, axis=1)  # cols
-    #gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
+    # gs_i_j_minus_1[:, -1, ...] = grayScale_mat[:, -2, ...]
     c_r = abs(gs_i_j_plus_1 - gs_i_j_minus_1) + abs(gs_i_minus_1_j - gs_i_j_plus_1)
-    c_r[0] = abs(gs_i_j_plus_1[0]-gs_i_j_minus_1[0])+255
-    c_r[:,cols-1]=255+255
-    c_r[:,0]=255+abs(gs_i_minus_1_j[:,0]-gs_i_j_plus_1[:,0])
+    c_r[0] = abs(gs_i_j_plus_1[0] - gs_i_j_minus_1[0]) + 255
+    c_r[:, cols - 1] = 255 + 255
+    c_r[:, 0] = 255 + abs(gs_i_minus_1_j[:, 0] - gs_i_j_plus_1[:, 0])
 
     return c_r
 
 
-def backtracking(cost_mat, energy_mat, c_v, c_l, isForward,rows,cols):
+def backtracking(cost_mat, energy_mat, c_v, c_l, isForward, rows, cols):
     seam = []
     min_last_col = 0
     num_of_rows = rows
@@ -157,34 +155,58 @@ def backtracking(cost_mat, energy_mat, c_v, c_l, isForward,rows,cols):
         if cost_mat[num_of_rows - 1][j] < min_last_val:
             min_last_col = j
             min_last_val = cost_mat[num_of_rows - 1][j]
-    elem=[num_of_rows - 1, min_last_col]
+    elem = [num_of_rows - 1, min_last_col]
     seam.append(elem)
     i = num_of_rows - 1
     while i > 0:
         if isForward:
-            if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
-                    c_v[i][min_last_col]:
-                min_last_col = min_last_col
-            elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1] + \
-                    c_l[i][min_last_col]:
-                min_last_col = min_last_col - 1
+            if min_last_col == cols - 1:
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                        c_v[i][min_last_col]:
+                    min_last_col = min_last_col
+                else:
+                    min_last_col = min_last_col - 1
+            if min_last_col == 0 :
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                        c_v[i][min_last_col]:
+                    min_last_col = min_last_col
+                else:
+                    min_last_col = min_last_col + 1
             else:
-                min_last_col = min_last_col + 1
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                        c_v[i][min_last_col]:
+                    min_last_col = min_last_col
+                elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1] + \
+                        c_l[i][min_last_col]:
+                    min_last_col = min_last_col - 1
+                else:
+                    min_last_col = min_last_col + 1
         else:
-            if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
-                min_last_col = min_last_col
-            elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1]:
-                min_last_col = min_last_col - 1
+            if min_last_col == (cols - 1):
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+                    min_last_col = min_last_col
+                else:
+                    min_last_col = min_last_col - 1
+            if min_last_col == 0:
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+                    min_last_col = min_last_col
+                else:
+                    min_last_col = min_last_col + 1
             else:
-                min_last_col = min_last_col + 1
+                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+                    min_last_col = min_last_col
+                elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1]:
+                    min_last_col = min_last_col - 1
+                else:
+                    min_last_col = min_last_col + 1
         i = i - 1
-        elem=[i, min_last_col]
+        elem = [i, min_last_col]
         seam.append(elem)
 
     return seam
 
 
-def seam_from_original_image(relative_seam, idx_mat,dict_col):
+def seam_from_original_image(relative_seam, idx_mat, dict_col):
     original_seam = []
     for i in range(len(relative_seam)):
         x = relative_seam[i][0]
@@ -197,20 +219,20 @@ def seam_from_original_image(relative_seam, idx_mat,dict_col):
 
 
 # seam is ordered from last to first row
-def remove_seam(mat, seam,rows,cols):
-    seam = seam[::-1]# reversing the seam so that the first cell has the index from the first row
+def remove_seam(mat, seam, rows, cols):
+    seam = seam[::-1]  # reversing the seam so that the first cell has the index from the first row
     for i in range(rows):
         j = seam[i][1]
-        mat[i][ j:-1] = mat[i][ j + 1:]  # shift
+        mat[i][j:-1] = mat[i][j + 1:]  # shift
         # mat.resize((rows, cols - 1))
         # mat = np.delete(mat, np.s_[-1:], axis=1)
 
+
 # seam is ordered from last to first row
-def remove_seam_from_idx(mat, seam,rows,cols):
-    seam = seam[::-1]# reversing the seam so that the first cell has the index from the first row
+def remove_seam_from_idx(mat, seam, rows, cols):
+    seam = seam[::-1]  # reversing the seam so that the first cell has the index from the first row
     for i in range(rows):
         j = seam[i][1]
         mat[i][:, j:-1] = mat[i][:, j + 1:]  # shift
         # mat.resize((rows, cols - 1))
         # mat = np.delete(mat, np.s_[-1:], axis=1)
-

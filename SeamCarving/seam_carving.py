@@ -12,7 +12,7 @@ def resize_width(image: NDArray, out_height: int, out_width: int, forward_implem
     in_cols = image.shape[1]
     idx_mat = utils.index_matrix(in_cols, in_rows)
     seam_db = []
-    delta_h = out_height - in_rows
+
     delta_w = out_width - in_cols
 
     # seam_list=list()
@@ -47,6 +47,7 @@ def resize_width(image: NDArray, out_height: int, out_width: int, forward_implem
                         copy_image[i][j] = [255, 0, 0]
                     else:
                         copy_image[i][j] = [0, 0, 0]
+        # print("new_j = "+str(new_j))
     if delta_w > 0:
         for i in range(in_rows):
             new_j = 0
@@ -63,8 +64,10 @@ def resize_width(image: NDArray, out_height: int, out_width: int, forward_implem
                 else:
                     new_image[i][new_j] = image[i][j]
                     new_j = new_j + 1
+        # print("new_j = " + str(new_j))
     if delta_w==0:
         new_image=image
+
 
     d = dict()
     d["original_img"] = image
