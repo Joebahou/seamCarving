@@ -151,6 +151,7 @@ def backtracking(cost_mat, energy_mat, c_v, c_l, isForward, rows, cols):
     min_last_col = 0
     num_of_rows = rows
     min_last_val = cost_mat[num_of_rows - 1][0]
+    epsilon = pow(10, -6)
     for j in range(cols):
         if cost_mat[num_of_rows - 1][j] < min_last_val:
             min_last_col = j
@@ -161,41 +162,41 @@ def backtracking(cost_mat, energy_mat, c_v, c_l, isForward, rows, cols):
     while i > 0:
         if isForward:
             if min_last_col == cols - 1:
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
-                        c_v[i][min_last_col]:
+                if abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                                                    c_v[i][min_last_col])) <= epsilon:
                     min_last_col = min_last_col
                 else:
                     min_last_col = min_last_col - 1
-            if min_last_col == 0 :
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
-                        c_v[i][min_last_col]:
+            elif min_last_col == 0:
+                if abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                                                    c_v[i][min_last_col])) <= epsilon:
                     min_last_col = min_last_col
                 else:
                     min_last_col = min_last_col + 1
             else:
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
-                        c_v[i][min_last_col]:
+                if abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col] + \
+                                                    c_v[i][min_last_col])) <= epsilon:
                     min_last_col = min_last_col
-                elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1] + \
-                        c_l[i][min_last_col]:
+                elif abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1] + \
+                                                      c_l[i][min_last_col])) <= epsilon:
                     min_last_col = min_last_col - 1
                 else:
                     min_last_col = min_last_col + 1
         else:
             if min_last_col == (cols - 1):
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+                if abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col])) < epsilon:
                     min_last_col = min_last_col
                 else:
                     min_last_col = min_last_col - 1
-            if min_last_col == 0:
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+            elif min_last_col == 0:
+                if abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col])) < epsilon:
                     min_last_col = min_last_col
                 else:
                     min_last_col = min_last_col + 1
             else:
-                if cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]:
+                if abs(cost_mat[i][min_last_col]- (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col]))<epsilon:
                     min_last_col = min_last_col
-                elif cost_mat[i][min_last_col] == energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1]:
+                elif abs(cost_mat[i][min_last_col] - (energy_mat[i][min_last_col] + cost_mat[i - 1][min_last_col - 1])) < epsilon:
                     min_last_col = min_last_col - 1
                 else:
                     min_last_col = min_last_col + 1

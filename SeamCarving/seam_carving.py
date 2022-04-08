@@ -47,7 +47,7 @@ def resize_width(image: NDArray, out_height: int, out_width: int, forward_implem
                         copy_image[i][j] = [255, 0, 0]
                     else:
                         copy_image[i][j] = [0, 0, 0]
-        # print("new_j = "+str(new_j))
+        print("new_j = "+str(new_j))
     if delta_w > 0:
         for i in range(in_rows):
             new_j = 0
@@ -64,7 +64,7 @@ def resize_width(image: NDArray, out_height: int, out_width: int, forward_implem
                 else:
                     new_image[i][new_j] = image[i][j]
                     new_j = new_j + 1
-        # print("new_j = " + str(new_j))
+        print("new_j = " + str(new_j))
     if delta_w==0:
         new_image=image
 
